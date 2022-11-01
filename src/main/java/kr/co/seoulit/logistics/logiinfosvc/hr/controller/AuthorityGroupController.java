@@ -65,7 +65,7 @@ public class AuthorityGroupController {
 		}
 		return map;
 	}
-	// 솔빈이 멍청이 머줌
+	// 솔빈이 멍청이 머줌 !!
 	@RequestMapping(value="/employeeauthoritygroup", method = RequestMethod.POST)
 	public ModelMap insertEmployeeAuthorityGroup(HttpServletRequest request, HttpServletResponse response) {
 		String empCode = request.getParameter("empCode");
