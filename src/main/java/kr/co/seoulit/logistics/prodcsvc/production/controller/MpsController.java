@@ -8,9 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -74,11 +72,12 @@ public class MpsController {
 	}
 
 	@RequestMapping(value="/mps/contractdetail-processplanavailable", method=RequestMethod.GET)
-	public ModelMap searchContractDetailListInProcessPlanAvailable(HttpServletRequest request,
-														   HttpServletResponse response) {
-		String searchCondition = request.getParameter("searchCondition");
+	public ModelMap searchContractDetailListInProcessPlanAvailable(@RequestParam("searchCondition") String searchCondition,
+																   @RequestParam("startDate") String startDate,
+																   @RequestParam("endDate") String endDate) {
+		/*String searchCondition = request.getParameter("searchCondition");
 		String startDate = request.getParameter("startDate");
-		String endDate = request.getParameter("endDate");
+		String endDate = request.getParameter("endDate");*/
 		map = new ModelMap();
 		try {
 			ArrayList<ContractDetailInMpsAvailableTO> contractDetailInMpsAvailableList =
@@ -95,10 +94,12 @@ public class MpsController {
 	}
 
 	@RequestMapping(value="/mps/salesplan-available", method=RequestMethod.GET)
-	public ModelMap searchSalesPlanListInMpsAvailable(HttpServletRequest request, HttpServletResponse response) {
-		String searchCondition = request.getParameter("searchCondition");
+	public ModelMap searchSalesPlanListInMpsAvailable(@RequestParam("searchCondition") String searchCondition,
+													  @RequestParam("startDate") String startDate,
+													  @RequestParam("endDate") String endDate) {
+		/*String searchCondition = request.getParameter("searchCondition");
 		String startDate = request.getParameter("startDate");
-		String endDate = request.getParameter("endDate");
+		String endDate = request.getParameter("endDate");*/
 		map = new ModelMap();
 		try {
 			ArrayList<SalesPlanInMpsAvailableTO> salesPlanInMpsAvailableList = 
@@ -116,11 +117,11 @@ public class MpsController {
 	}
 
 	@RequestMapping(value="mps/contractdetail", method=RequestMethod.PUT)
-	public ModelMap convertContractDetailToMps(HttpServletRequest request, HttpServletResponse response) {
-		String batchList = request.getParameter("batchList"); 
+	public ModelMap convertContractDetailToMps(@RequestBody ArrayList<ContractDetailInMpsAvailableTO> contractDetailInMpsAvailableList) {
+		//String batchList = request.getParameter("batchList");
 		map = new ModelMap();
-		ArrayList<ContractDetailInMpsAvailableTO> contractDetailInMpsAvailableList = gson.fromJson(batchList,
-				new TypeToken<ArrayList<ContractDetailInMpsAvailableTO>>() {}.getType());
+		/*ArrayList<ContractDetailInMpsAvailableTO> contractDetailInMpsAvailableList = gson.fromJson(batchList,
+				new TypeToken<ArrayList<ContractDetailInMpsAvailableTO>>() {}.getType());*/
 		try {
 			HashMap<String, Object> resultMap = productionService
 					.convertContractDetailToMps(contractDetailInMpsAvailableList);
@@ -137,13 +138,13 @@ public class MpsController {
 	}
 
 	@RequestMapping(value="/mps/salesplan", method=RequestMethod.PUT)
-	public ModelMap convertSalesPlanToMps(HttpServletRequest request, HttpServletResponse response) {
-		String batchList = request.getParameter("batchList");
+	public ModelMap convertSalesPlanToMps(@RequestBody ArrayList<SalesPlanInMpsAvailableTO> salesPlanInMpsAvailableList) {
+		//String batchList = request.getParameter("batchList");
 		map = new ModelMap();
 		try {
-			ArrayList<SalesPlanInMpsAvailableTO> salesPlanInMpsAvailableList = gson.fromJson(batchList,
+			/*ArrayList<SalesPlanInMpsAvailableTO> salesPlanInMpsAvailableList = gson.fromJson(batchList,
 					new TypeToken<ArrayList<SalesPlanInMpsAvailableTO>>() {
-					}.getType());
+					}.getType());*/
 			HashMap<String, Object> resultMap = productionService.convertSalesPlanToMps(salesPlanInMpsAvailableList);
 
 			map.put("result", resultMap);
