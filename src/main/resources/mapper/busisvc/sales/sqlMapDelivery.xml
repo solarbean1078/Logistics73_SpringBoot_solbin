@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.seoulit.logistics.busisvc.sales.mapper.DeliveryMapper">
+
+    <resultMap type="kr.co.seoulit.logistics.busisvc.sales.to.DeliveryInfoTO" id="deliveryInfoResult">
+        <result property="deliveryNo" column="DELIVERY_NO"/>
+        <result property="estimateNo" column="ESTIMATE_NO"/>
+        <result property="contractNo" column="CONTRACT_NO"/>
+        <result property="contractDetailNo" column="CONTRACT_DETAIL_NO"/>
+        <result property="customerCode" column="CUSTOMER_CODE"/>
+        <result property="personCodeInCharge" column="PERSON_CODE_IN_CHARGE"/>
+        <result property="itemCode" column="ITEM_CODE"/>
+        <result property="itemName" column="ITEM_NAME"/>
+        <result property="unitOfDelivery" column="UNIT_OF_DELIVERY"/>
+        <result property="deliveryAmount" column="DELIVERY_AMOUNT"/>
+        <result property="unitPrice" column="UNIT_PRICE"/>
+        <result property="sumPrice" column="SUM_PRICE"/>
+        <result property="deliveryDate" column="DELIVERY_DATE"/>
+        <result property="deliveryPlaceName" column="DELIVERY_PLACE_NAME"/>
+    </resultMap>
+
+    <select id="selectDeliveryInfoList" resultMap="deliveryInfoResult">
+        SELECT *
+        FROM DELIVERY_INFO
+        ORDER BY DELIVERY_DATE DESC
+    </select>
+
+    <!--    <select id="selectQuarterlySalesChart" resultMap="QuarterlySalesChart">-->
+    <!--        SELECT CEIL(SUBSTR(delivery_date, 7, 1) / 4 + 1) AS qua,-->
+    <!--               sum(delivery_amount * unit_price)-->
+    <!--        FROM DELIVERY_INFO-->
+    <!--        group BY CEIL(SUBSTR(delivery_date, 7, 1) / 4 + 1)-->
+    <!--        ORDER BY qua;-->
+    <!--    </select>-->
+
+    <insert id="insertDeliveryResult" parameterType="kr.co.seoulit.logistics.busisvc.sales.to.DeliveryInfoTO">
+        INSERT INTO DELIVERY_INFO
+        VALUES (#{deliveryNo},
+                #{estimateNo},
+                #{contractNo},
+                #{contractDetailNo},
+                #{customerCode},
+                #{personCodeInCharge},
+                #{itemCode},
+                #{itemName},
+                #{unitOfDelivery},
+                #{deliveryAmount},
+                #{unitPrice},
+                #{sumPrice},
+                #{deliverydate},
+                #{deliveryPlaceName})
+    </insert>
+
+    <parameterMap type="map" id="deliverParameter">
+        <parameter property="contractDetailNo" javaType="java.lang.String" jdbcType="VARCHAR" mode="IN"/>
+        <parameter property="ERROR_CODE" javaType="java.lang.Integer" jdbcType="DECIMAL" mode="OUT"/>
+        <parameter property="ERROR_MSG" javaType="java.lang.String" jdbcType="VARCHAR" mode="OUT"/>
+    </parameterMap>
+
+    <select id="deliver" parameterMap="deliverParameter" statementType="CALLABLE">
+		<![CDATA[
+        {call P_DELIVER(?, ?, ?)}
+        ]]>
+	</select>
+
+    <update id="updateDeliveryResult" parameterType="kr.co.seoulit.logistics.busisvc.sales.to.DeliveryInfoTO">
+        UPDATE DELIVERY_INFO
+        SET DELIVERY_NO           = #{deliveryNo},
+            ESTIMATE_NO           = #{estimateNo},
+            CONTRACT_NO           = #{contractNo},
+            CONTRACT_DETAIL_NO    = #{contractDetailNo},
+            CUSTOMER_CODE         = #{customerCode},
+            PERSON_CODE_IN_CHARGE = #{personCodeInCharge},
+            ITEM_CODE             = #{itemCode},
+            ITEM_NAME             = #{itemName},
+            UNIT_OF_DELIVERY      = #{unitOfDelivery},
+            DELIVERY_AMOUNT       = #{deliveryAmount},
+            UNIT_PRICE            = #{unitPrice},
+            SUM_PRICE             = #{sumPrice},
+            DELIVERY_DATE         = #{deliverydate},
+            DELIVERY_PLACE_NAME   = #{deliveryPlaceName}
+        WHERE DELIVERY_NO = #{deliveryNo}
+    </update>
+
+    <delete id="deleteDeliveryResult" parameterType="kr.co.seoulit.logistics.busisvc.sales.to.DeliveryInfoTO">
+        DELETE
+        FROM DELIVERY_INFO
+        WHERE DELIVERY_NO = #{deliveryNo}
+    </delete>
+
+    <select id="selectSalesChart" resultType="kr.co.seoulit.logistics.busisvc.sales.to.QuarterTO">
+        SELECT TO_CHAR(TO_date(delivery_date, 'rrrr-mm-dd hh24:mi:ss'), 'q') AS qua, SUM(sum_Price) price
+        FROM DELIVERY_INFO
+        GROUP BY TO_CHAR(TO_date(delivery_date, 'rrrr-mm-dd hh24:mi:ss'), 'q')
+        ORDER BY qua
+    </select>
+
+    <select id="selectSalesStatus" resultType="kr.co.seoulit.logistics.busisvc.sales.to.SalesStatusTO">
+        SELECT A.CONTRACT_NO,
+               C.CONTRACT_DATE,
+               B.CUSTOMER_NAME,
+               A.DELIVERY_DATE,
+               A.SUM_PRICE,
+               A.SUM_PRICE * 0.6 AS NETINCOME
+        FROM DELIVERY_INFO A,
+             CUSTOMER B,
+             CONTRACT C
+        WHERE A.CUSTOMER_CODE = B.CUSTOMER_CODE
+          AND B.CUSTOMER_CODE = C.CUSTOMER_CODE
+          AND A.CUSTOMER_CODE = C.CUSTOMER_CODE
+          AND TO_DATE(A.DELIVERY_DATE, 'RRRR-MM-DD HH24:MI:SS') BETWEEN TO_DATE(#{start}, 'RRRR-MM-DD') AND TO_DATE(#{end}, 'RRRR-MM-DD')
+    </select>
+
+
+    <select id="selectReturnInfoList" resultType="kr.co.seoulit.logistics.busisvc.sales.to.ReturnInfoTO">
+        SELECT A.DELIVERY_NO,
+               A.DELIVERY_DATE,
+               B.CUSTOMER_NAME,
+               A.ITEM_NAME,
+               A.DELIVERY_AMOUNT AS RETURN_UNIT,
+               A.UNIT_PRICE      AS RETURN_UNIT_PRICE,
+               A.SUM_PRICE       AS RETURN_SUM_PRICE
+        FROM DELIVERY_INFO A,
+             CUSTOMER B
+        WHERE A.CUSTOMER_CODE = B.CUSTOMER_CODE
+        AND TO_DATE(A.DELIVERY_DATE, 'RRRR-MM-DD HH24:MI:SS') BETWEEN TO_DATE(#{start}, 'RRRR-MM-DD') AND TO_DATE(#{end}, 'RRRR-MM-DD')
+    </select>
+
+    <delete id="deleteCustomerList" parameterType="kr.co.seoulit.logistics.busisvc.sales.to.CustomerReportTO">
+        DELETE FROM CUSTOMER_REPORT
+    </delete>
+
+    <insert id="insertCustomerList" parameterType="kr.co.seoulit.logistics.busisvc.sales.to.CustomerReportTO">
+        INSERT INTO CUSTOMER_REPORT
+        VALUES (#{contractDate},
+                #{contractNo},
+                #{deliveryDate},
+                #{customerName},
+                #{sumPrice},
+                #{netIncome},
+                null)
+    </insert>
+
+</mapper>
