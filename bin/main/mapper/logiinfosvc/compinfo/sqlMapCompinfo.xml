@@ -627,7 +627,7 @@
     
     <insert id="insertBoardFile" parameterType="kr.co.seoulit.logistics.logiinfosvc.compinfo.util.BoardFile">
 		<![CDATA[                
-   			INSERT INTO BOARDFILE VALUES (boardFile_seq.NEXTVAL, newBoard_seq.CURRVAL, #{fileName}, #{tempFileName})
+   			INSERT INTO BOARDFILE VALUES (boardFile_seq.NEXTVAL, newBoard_seq.CURRVAL, #{tempFileName}, #{fileName})
    		]]>
     </insert>
     

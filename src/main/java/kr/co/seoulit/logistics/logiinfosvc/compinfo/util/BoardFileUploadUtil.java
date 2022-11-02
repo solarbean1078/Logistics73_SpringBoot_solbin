@@ -17,7 +17,7 @@ public class BoardFileUploadUtil {
 		String newFileName = Long.toString(System.currentTimeMillis()+new Object().hashCode());
 
 		//파일을 업로드할 절대 경로를 지정해야 한다. 
-		String path ="C:\\dev\\nginx-1.21.6\\nginx-1.21.6\\html\\upload\\";
+		String path ="C:\\backup\\73project_intelij_solbin_20221021\\src\\main\\webapp\\upload\\";
 		FileOutputStream fout = new FileOutputStream(path + newFileName );
 		int bytesRead = 0;
 		byte[] buffer = new byte[8192];

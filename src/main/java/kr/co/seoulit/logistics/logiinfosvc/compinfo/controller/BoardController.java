@@ -185,7 +185,7 @@ public class BoardController {
 		String fileName = request.getParameter("fileName");
 		try {
 
-			String filePath="C:\\dev\\nginx-1.21.6\\nginx-1.21.6\\html\\upload\\"+tempFileName;
+			String filePath="C:\\backup\\73project_intelij_solbin_20221021\\src\\main\\webapp\\upload\\"+tempFileName;
 			File tempFile = new File(filePath);
 			int filesize = (int) tempFile.length();		
 			response.setContentType("application/octet-stream;charset=utf-8");

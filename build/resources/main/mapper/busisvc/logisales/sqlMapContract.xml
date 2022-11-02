@@ -3,7 +3,7 @@
 
 <mapper namespace="kr.co.seoulit.logistics.busisvc.logisales.mapper.ContractMapper">
 
-	<resultMap type="kr.co.seoulit.logistics.busisvc.logisales.to.EstimateTO" id="estimateList">
+	<!--<resultMap type="kr.co.seoulit.logistics.busisvc.logisales.to.EstimateTO" id="estimateList">
 		<result property="contractStatus" column="CONTRACT_STATUS"  />
 		<result property="customerCode" column="CUSTOMER_CODE"  />
 		<result property="description" column="DESCRIPTION"  />
@@ -13,9 +13,9 @@
 		<result property="estimateRequester" column="ESTIMATE_REQUESTER"  />
 		<result property="personCodeInCharge" column="PERSON_CODE_IN_CHARGE"  />
 		<result property="customerName" column="CUSTOMER_NAME" />
-	</resultMap>
+	</resultMap>-->
 
-	<select id="selectEstimateListInContractAvailable" parameterType="map" resultMap="estimateList">
+	<select id="selectEstimateListInContractAvailable" resultType="EstimateTO">
 	<![CDATA[
 		SELECT *
 		FROM ESTIMATE a ,(SELECT CUSTOMER_CODE , CUSTOMER_NAME FROM CUSTOMER) b

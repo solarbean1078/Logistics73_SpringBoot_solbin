@@ -79,7 +79,7 @@
 		DELETE FROM DELIVERY_INFO WHERE DELIVERY_NO = #{deliveryNo}
 	</delete>
 
-	<select id="selectSalesChart" resultType="kr.co.seoulit.logistics.busisvc.sales.to.QuarterTO">
+	<select id="selectSalesChart" resultType="QuarterTO">
 		SELECT TO_CHAR(TO_date(delivery_date,'rrrr-mm-dd hh24:mi:ss'),'q') AS qua, SUM(sum_Price) price
 		FROM   DELIVERY_INFO
 		GROUP BY TO_CHAR(TO_date(delivery_date,'rrrr-mm-dd hh24:mi:ss'),'q')
